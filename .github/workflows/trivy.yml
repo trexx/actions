@@ -3,7 +3,7 @@ name: Trivy
 on:
   workflow_call:
     inputs:
-      repository:
+      image-name:
         required: true
         type: string
 
@@ -26,7 +26,7 @@ jobs:
           TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db
           TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db,ghcr.io/aquasecurity/trivy-java-db
         with:
-          image-ref: ghcr.io/${{ inputs.repository }}:latest
+          image-ref: ghcr.io/${{ inputs.image-name }}:latest
           format: 'github'
           output: 'dependency-results.sbom.json'
           github-pat: ${{ secrets.GITHUB_TOKEN }}
@@ -37,7 +37,7 @@ jobs:
           TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db
           TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db,ghcr.io/aquasecurity/trivy-java-db
         with:
-          image-ref: ghcr.io/${{ inputs.repository }}:latest
+          image-ref: ghcr.io/${{ inputs.image-name }}:latest
           format: 'sarif'
           output: 'trivy-results.sarif'
           scanners: 'vuln'
