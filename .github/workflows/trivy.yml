@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  scan:
     permissions:
       packages: read
       contents: write # for actions/checkout to fetch code
@@ -34,8 +34,8 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         env:
-          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db
-          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db,ghcr.io/aquasecurity/trivy-java-db
+          TRIVY_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db'
+          TRIVY_JAVA_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-java-db,ghcr.io/aquasecurity/trivy-java-db'
         with:
           image-ref: ghcr.io/${{ inputs.image-name }}:latest
           format: 'sarif'
