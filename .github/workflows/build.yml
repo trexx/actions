@@ -2,10 +2,11 @@ name: Build
 
 on:
   workflow_call:
-    prune_images:
-      description: 'Prune old images?'
-      type: boolean
-      default: true
+    inputs:
+      prune_images:
+        description: 'Prune old images?'
+        type: boolean
+        default: true
 
 jobs:
   build:
