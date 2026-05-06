@@ -1,7 +1,7 @@
 name: Trivy FS
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   scan:

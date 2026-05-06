@@ -1,7 +1,7 @@
 name: Build Rust
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   build:
