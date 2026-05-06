@@ -16,13 +16,13 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Setup Rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@v2.9.1
 
       - name: Build release binary
         run: cargo build --release --locked
 
       - name: Create release and upload exe
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3.0.0
         with:
           files: target/release/g6-cli.exe
           fail_on_unmatched_files: true
