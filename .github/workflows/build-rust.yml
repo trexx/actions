@@ -1,0 +1,27 @@
+name: Build Rust
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build release binary
+        run: cargo build --release --locked
+
+      - name: Create release and upload exe
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/release/g6-cli.exe
+          fail_on_unmatched_files: true
+          generate_release_notes: true
