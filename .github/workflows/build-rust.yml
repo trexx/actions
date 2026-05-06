@@ -20,7 +20,7 @@ jobs:
         run: cargo build --release --locked
 
       - name: Create release and upload exe
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
         with:
           files: target/release/g6-cli.exe
           fail_on_unmatched_files: true
