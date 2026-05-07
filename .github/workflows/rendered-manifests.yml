@@ -31,10 +31,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Generate manifests
-      #   run: |
-      #     kustomize build . > ./production-build.yaml
-
       - name: Push and sign manifests
         run: |
           digest_url=$(flux push artifact \
@@ -50,3 +46,13 @@ jobs:
       - name: Tag as latest
         run: |
           flux tag artifact $OCI_REPO:$(git rev-parse --short HEAD) --tag latest
+
+      # Clearing old images
+      # https://github.com/dataaxiom/ghcr-cleanup-action
+      - name: Registry pruning
+        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        with:
+          exclude-tags: latest
+          keep-n-tagged: 1
+          delete-untagged: true
+          delete-partial-images: true
