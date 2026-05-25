@@ -50,7 +50,7 @@ jobs:
       # Clearing old images
       # https://github.com/dataaxiom/ghcr-cleanup-action
       - name: Registry pruning
-        uses: dataaxiom/ghcr-cleanup-action@374e2028c8fb93b7219f3771cd405fab95d3dec4 # v1.2.0
+        uses: dataaxiom/ghcr-cleanup-action@f092b48ba3b604b2a83690dc4b2bbb3392e1045f # v1.2.1
         with:
           exclude-tags: latest
           keep-n-tagged: 1
