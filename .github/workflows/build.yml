@@ -10,7 +10,7 @@ on:
       context:
         description: 'Context to build'
         type: string
-        default: ./
+        default: "{{defaultContext}}"
       images:
         description: 'Images to build'
         type: string
