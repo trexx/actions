@@ -7,6 +7,14 @@ on:
         description: 'Prune old images?'
         type: boolean
         default: true
+      context:
+        description: 'Context to build'
+        type: string
+        default: ./
+      images:
+        description: 'Images to build'
+        type: string
+        default: ghcr.io/${{ github.repository }}
 
 jobs:
   build:
@@ -37,7 +45,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ inputs.images }}
 
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
@@ -46,6 +54,7 @@ jobs:
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
           push: true
+          context: ${{ inputs.context }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
