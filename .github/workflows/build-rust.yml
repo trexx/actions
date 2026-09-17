@@ -38,6 +38,8 @@ jobs:
       - name: Create release and upload exe
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
-          files: target/release/g6-cli.exe
+          files: |
+            target/release/g6-cli.exe
+            target/release/g6-watch.exe
           fail_on_unmatched_files: true
           generate_release_notes: true
