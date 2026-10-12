@@ -1,0 +1,26 @@
+name: 'Prune GHCR images'
+description: "Delete old images from the repository's GHCR package, keeping the excluded tags and the newest tagged images"
+
+inputs:
+  keep_n_tagged:
+    description: 'Tagged images to keep, not counting exclude_tags'
+    default: '2'
+  exclude_tags:
+    description: 'Comma-separated tags that are never deleted'
+    default: 'latest'
+
+runs:
+  using: 'composite'
+  steps:
+    # https://github.com/dataaxiom/ghcr-cleanup-action
+    - name: 'Registry pruning'
+      uses: 'dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f' # v1.2.2
+      with:
+        exclude-tags: '${{ inputs.exclude_tags }}'
+        keep-n-tagged: '${{ inputs.keep_n_tagged }}'
+        delete-untagged: true
+        delete-partial-images: true
+        # Also clear broken leftovers: multi-arch images with no platform images,
+        # and signatures/attestations whose image has been deleted
+        delete-ghost-images: true
+        delete-orphaned-images: true

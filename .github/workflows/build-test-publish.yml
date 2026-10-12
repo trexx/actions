@@ -93,12 +93,8 @@ jobs:
             docker push -q "${IMAGE}:${TAG}"
           done
 
-      # https://github.com/dataaxiom/ghcr-cleanup-action
       - name: 'Registry pruning'
         if: "steps.changes.outputs.publish == 'true' && inputs.prune_images"
-        uses: 'dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f' # v1.2.2
+        uses: 'trexx/actions/.github/actions/prune-ghcr@claude/lucid-darwin-nuuu7t'
         with:
-          exclude-tags: 'latest'
-          keep-n-tagged: '${{ inputs.keep_n_tagged }}'
-          delete-untagged: true
-          delete-partial-images: true
+          keep_n_tagged: '${{ inputs.keep_n_tagged }}'
