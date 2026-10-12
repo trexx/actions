@@ -95,6 +95,6 @@ jobs:
 
       - name: 'Registry pruning'
         if: "steps.changes.outputs.publish == 'true' && inputs.prune_images"
-        uses: 'trexx/actions/.github/actions/prune-ghcr@main'
+        uses: 'trexx/actions/.github/actions/prune-ghcr@56e712df75f32f7c4247164cb269150d624acf93' # main
         with:
           keep_n_tagged: '${{ inputs.keep_n_tagged }}'
