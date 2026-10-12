@@ -48,11 +48,7 @@ jobs:
           flux tag artifact $OCI_REPO:$(git rev-parse --short HEAD) --tag latest
 
       # Clearing old images
-      # https://github.com/dataaxiom/ghcr-cleanup-action
       - name: Registry pruning
-        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        uses: 'trexx/actions/.github/actions/prune-ghcr@main'
         with:
-          exclude-tags: latest
-          keep-n-tagged: 1
-          delete-untagged: true
-          delete-partial-images: true
+          keep_n_tagged: 1
