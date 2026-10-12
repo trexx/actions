@@ -8,5 +8,17 @@
   ],
   "enabledManagers": [
     "github-actions"
+  ],
+  "packageRules": [
+    {
+      "description": "Own actions and workflows follow main; don't update or pin them",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchPackageNames": [
+        "trexx/**"
+      ],
+      "enabled": false
+    }
   ]
 }
