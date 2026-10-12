@@ -95,6 +95,6 @@ jobs:
 
       - name: 'Registry pruning'
         if: "steps.changes.outputs.publish == 'true' && inputs.prune_images"
-        uses: 'trexx/actions/.github/actions/prune-ghcr@claude/lucid-darwin-nuuu7t'
+        uses: 'trexx/actions/.github/actions/prune-ghcr@main'
         with:
           keep_n_tagged: '${{ inputs.keep_n_tagged }}'

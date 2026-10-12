@@ -26,3 +26,15 @@ jobs:
 ```
 
 Inputs: `context`, `image`, `test_command`, `version_command`, `publish_branch`, `prune_images`, `keep_n_tagged`.
+
+## Actions
+
+### prune-ghcr
+
+Deletes old images from the repository's GHCR package: untagged and broken images, orphaned signatures and attestations, and all but the newest `keep_n_tagged` tagged images. Tags in `exclude_tags` (default `latest`) are never deleted. Needs `packages: write`.
+
+```yaml
+- uses: 'trexx/actions/.github/actions/prune-ghcr@main'
+  with:
+    keep_n_tagged: 2
+```

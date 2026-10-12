@@ -61,4 +61,4 @@ jobs:
       # Clearing old images
       - name: Registry pruning
         if: ${{ inputs.prune_images }}
-        uses: 'trexx/actions/.github/actions/prune-ghcr@claude/lucid-darwin-nuuu7t'
+        uses: 'trexx/actions/.github/actions/prune-ghcr@main'

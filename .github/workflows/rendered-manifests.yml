@@ -49,6 +49,6 @@ jobs:
 
       # Clearing old images
       - name: Registry pruning
-        uses: 'trexx/actions/.github/actions/prune-ghcr@claude/lucid-darwin-nuuu7t'
+        uses: 'trexx/actions/.github/actions/prune-ghcr@main'
         with:
           keep_n_tagged: 1
