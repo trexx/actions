@@ -176,7 +176,7 @@ Repositories use third-party actions only through these wrappers, so every third
 | `setup-node` | [`actions/setup-node`](https://github.com/actions/setup-node) | v7 |
 | `upload-artifact` | [`actions/upload-artifact`](https://github.com/actions/upload-artifact) | v7.0.2 |
 
-To wrap another action, add it to the generator input and regenerate, or copy an existing wrapper.
+To wrap another action, copy an existing wrapper and replace its inputs, outputs and pinned `uses:` with the upstream action's (from its `action.yml`).
 
 ## Renovate preset
 
