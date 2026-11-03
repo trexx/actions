@@ -1,0 +1,33 @@
+name: "Docker Login"
+description: "Pinned wrapper for docker/login-action, inputs and outputs passed through unchanged. Generated; update the pin with Renovate."
+
+inputs:
+  registry:
+    description: "Server address of Docker registry. If not set then will default to Docker Hub"
+  username:
+    description: "Username used to log against the Docker registry"
+  password:
+    description: "Password or personal access token used to log against the Docker registry"
+  ecr:
+    description: "Specifies whether the given registry is ECR (auto, true or false)"
+  scope:
+    description: "Scope for the authentication token"
+  logout:
+    description: "Log out from the Docker registry at the end of a job"
+    default: "true"
+  registry-auth:
+    description: "Raw authentication to registries, defined as YAML objects"
+
+runs:
+  using: 'composite'
+  steps:
+    - id: 'upstream'
+      uses: 'docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6' # v4.7.0
+      with:
+        registry: '${{ inputs.registry }}'
+        username: '${{ inputs.username }}'
+        password: '${{ inputs.password }}'
+        ecr: '${{ inputs.ecr }}'
+        scope: '${{ inputs.scope }}'
+        logout: '${{ inputs.logout }}'
+        registry-auth: '${{ inputs.registry-auth }}'

@@ -1,0 +1,32 @@
+name: "rustup toolchain install"
+description: "Pinned wrapper for dtolnay/rust-toolchain, inputs and outputs passed through unchanged. Generated; update the pin with Renovate."
+
+inputs:
+  toolchain:
+    description: "Rust toolchain specification -- see https://rust-lang.github.io/rustup/concepts/toolchains.html#toolchain-specification"
+    required: true
+  targets:
+    description: "Comma-separated list of target triples to install for this toolchain"
+  target:
+    description: "Alias for `targets`"
+  components:
+    description: "Comma-separated list of components to be additionally installed"
+
+outputs:
+  cachekey:
+    description: "A short hash of the rustc version, appropriate for use as a cache key. \"20220627a831\""
+    value: '${{ steps.upstream.outputs.cachekey }}'
+  name:
+    description: "Rustup's name for the selected version of the toolchain. \"1.62.0\""
+    value: '${{ steps.upstream.outputs.name }}'
+
+runs:
+  using: 'composite'
+  steps:
+    - id: 'upstream'
+      uses: 'dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8' # master
+      with:
+        toolchain: '${{ inputs.toolchain }}'
+        targets: '${{ inputs.targets }}'
+        target: '${{ inputs.target }}'
+        components: '${{ inputs.components }}'

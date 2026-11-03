@@ -1,0 +1,51 @@
+name: 'Set up Android build'
+description: 'JDK from gradle/gradle-daemon-jvm.properties, Android SDK packages and Gradle (caching and wrapper validation). Run after actions/checkout.'
+
+inputs:
+  packages:
+    description: 'Space-separated sdkmanager packages, e.g. "platforms;android-37.0 build-tools;36.0.0"'
+    default: ''
+  project_directory:
+    description: 'Directory holding the Gradle project (the one with gradle/gradle-daemon-jvm.properties)'
+    default: '.'
+
+outputs:
+  java_version:
+    description: 'The JDK version that was set up'
+    value: '${{ steps.jdk.outputs.version }}'
+
+runs:
+  using: 'composite'
+  steps:
+    # gradle/gradle-daemon-jvm.properties is the one place the JDK version is set: Gradle runs
+    # on it and the modules compile to it. Reading it here keeps CI on the same JDK, so Gradle
+    # finds a match instead of downloading a second one.
+    - name: 'Read JDK version'
+      id: 'jdk'
+      shell: 'bash'
+      working-directory: '${{ inputs.project_directory }}'
+      run: |
+        version="$(sed -n 's/^toolchainVersion=//p' gradle/gradle-daemon-jvm.properties)"
+        if [ -z "${version}" ]; then
+          echo "::error::no toolchainVersion in ${{ inputs.project_directory }}/gradle/gradle-daemon-jvm.properties"
+          exit 1
+        fi
+        echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
+    - name: 'Set up JDK ${{ steps.jdk.outputs.version }}'
+      uses: 'actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad' # v6.1.0
+      with:
+        distribution: 'temurin'
+        java-version: '${{ steps.jdk.outputs.version }}'
+
+    # Installing the SDK packages up front keeps the download out of the Gradle run and pins
+    # what CI compiles against.
+    - name: 'Set up Android SDK'
+      uses: 'android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd' # v4.0.4
+      with:
+        packages: '${{ inputs.packages }}'
+
+    # Dependency/build caching (read-only off the default branch) and Gradle wrapper
+    # checksum validation.
+    - name: 'Set up Gradle'
+      uses: 'gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c' # v6.4.1

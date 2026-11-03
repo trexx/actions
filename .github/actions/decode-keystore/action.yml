@@ -1,0 +1,60 @@
+name: 'Decode keystore'
+description: 'Writes a base64-encoded keystore secret to a file under RUNNER_TEMP and exposes its path'
+
+inputs:
+  keystore_base64:
+    description: 'The base64-encoded keystore, normally a secret'
+    default: ''
+  required:
+    description: 'Fail when no keystore is given (otherwise the build is expected to fall back to another key)'
+    default: 'false'
+  filename:
+    description: 'File name to write under RUNNER_TEMP'
+    default: 'release.keystore'
+  env_var:
+    description: 'Also export the keystore path in this environment variable for later steps (optional)'
+    default: ''
+  missing_message:
+    description: 'Shown as a warning (or as the error, when required) when no keystore is given'
+    default: ''
+
+outputs:
+  path:
+    description: 'Path of the decoded keystore, empty when none was given'
+    value: '${{ steps.decode.outputs.path }}'
+  present:
+    description: '"true" when a keystore was decoded'
+    value: '${{ steps.decode.outputs.present }}'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Decode keystore'
+      id: 'decode'
+      shell: 'bash'
+      env:
+        KEYSTORE_BASE64: '${{ inputs.keystore_base64 }}'
+        REQUIRED: '${{ inputs.required }}'
+        FILENAME: '${{ inputs.filename }}'
+        ENV_VAR: '${{ inputs.env_var }}'
+        MISSING_MESSAGE: '${{ inputs.missing_message }}'
+      run: |
+        set -euo pipefail
+        if [ -z "${KEYSTORE_BASE64}" ]; then
+          if [ "${REQUIRED}" = 'true' ]; then
+            echo "::error::${MISSING_MESSAGE:-no keystore given}"
+            exit 1
+          fi
+          if [ -n "${MISSING_MESSAGE}" ]; then
+            echo "::warning::${MISSING_MESSAGE}"
+          fi
+          echo 'present=false' >> "${GITHUB_OUTPUT}"
+          exit 0
+        fi
+        path="${RUNNER_TEMP}/${FILENAME}"
+        echo "${KEYSTORE_BASE64}" | base64 -d > "${path}"
+        echo "path=${path}" >> "${GITHUB_OUTPUT}"
+        echo 'present=true' >> "${GITHUB_OUTPUT}"
+        if [ -n "${ENV_VAR}" ]; then
+          echo "${ENV_VAR}=${path}" >> "${GITHUB_ENV}"
+        fi

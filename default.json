@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate settings for trexx repositories. Use with \"extends\": [\"github>trexx/actions\"].",
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "description": "Own actions and workflows follow main; don't update or pin them",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchPackageNames": [
+        "trexx/**"
+      ],
+      "enabled": false
+    }
+  ]
+}

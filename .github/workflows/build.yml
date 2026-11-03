@@ -15,6 +15,34 @@ on:
         description: 'Images to build'
         type: string
         default: ghcr.io/${{ github.repository }}
+      target:
+        description: 'Dockerfile stage to build (default: the last one)'
+        type: string
+        default: ''
+      tags:
+        description: 'docker/metadata-action tag rules (default: its own rules)'
+        type: string
+        default: ''
+      flavor:
+        description: 'docker/metadata-action flavor (default: its own)'
+        type: string
+        default: ''
+      labels:
+        description: 'Extra image labels, one key=value per line'
+        type: string
+        default: ''
+      platforms:
+        description: 'Comma-separated platforms, e.g. linux/amd64,linux/arm64 (default: the runner''s)'
+        type: string
+        default: ''
+      push:
+        description: 'Push the image? With false the image is only built, e.g. on pull requests'
+        type: boolean
+        default: true
+      cache_scope:
+        description: 'GitHub Actions cache scope for build layers (default: no cache)'
+        type: string
+        default: ''
 
 jobs:
   build:
@@ -33,6 +61,7 @@ jobs:
       # Login against a Docker registry
       # https://github.com/docker/login-action
       - name: Log into registry ghcr.io
+        if: ${{ inputs.push }}
         uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: ghcr.io
@@ -46,6 +75,9 @@ jobs:
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           images: ${{ inputs.images }}
+          tags: ${{ inputs.tags }}
+          flavor: ${{ inputs.flavor }}
+          labels: ${{ inputs.labels }}
 
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
@@ -53,12 +85,16 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
-          push: true
+          push: ${{ inputs.push }}
           context: ${{ inputs.context }}
+          target: ${{ inputs.target }}
+          platforms: ${{ inputs.platforms }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: ${{ inputs.cache_scope != '' && format('type=gha,scope={0}', inputs.cache_scope) || '' }}
+          cache-to: ${{ inputs.cache_scope != '' && format('type=gha,scope={0},mode=max', inputs.cache_scope) || '' }}
 
       # Clearing old images
       - name: Registry pruning
-        if: ${{ inputs.prune_images }}
+        if: ${{ inputs.push && inputs.prune_images }}
         uses: 'trexx/actions/.github/actions/prune-ghcr@main'
