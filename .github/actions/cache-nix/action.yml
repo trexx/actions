@@ -1,0 +1,115 @@
+name: "Restore and save Nix Store"
+description: "Pinned wrapper for nix-community/cache-nix-action, inputs and outputs passed through unchanged. Generated; update the pin with Renovate."
+
+inputs:
+  primary-key:
+    description: "- When a non-empty string, the action uses this key for restoring and saving a cache. - Otherwise, the action fails."
+    required: true
+  restore-prefixes-first-match:
+    description: "- When a newline-separated non-empty list of non-empty key prefixes, when there's a miss on the `primary-key`, the action searches in this list for the first prefix for which there exists a cache whose key has this prefix, and the action tries to restore that cache. - Otherwise, this input has no effect."
+    default: ""
+  restore-prefixes-all-matches:
+    description: "- When a newline-separated non-empty list of non-empty key prefixes, when there's a miss on the `primary-key`, the action tries to restore all caches whose keys have these prefixes. - Tries caches across all refs to make use of caches created on the current, base, and default branches (see [docs](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache)). - Otherwise, this input has no effect."
+    default: ""
+  lookup-only:
+    description: "- When `true`, when there's a hit on the `primary-key`, the action doesn't restore any cache. - Otherwise, the action can restore caches. - Doesn't change the behavior of cache saving in any case."
+    default: "false"
+  fail-on:
+    description: "- Input form: `<key type>.<result>`. - `<key type>` options: `primary-key`, `first-match`. - `<result>` options: `miss`, `not-restored`. - When the input satisfies the input form, when the event described in the input happens, the action fails. - Example: - Input: `primary-key.not-restored`. - Event: a cache could not be restored via the `primary-key`. - Otherwise, this input has no effect."
+    default: ""
+  nix:
+    description: "- Can have an effect only when the action runs on a `Linux` or a `macOS` runner. - When `true`, the action can do Nix-specific things. - Otherwise, the action doesn't do them."
+    default: "true"
+  save:
+    description: "- When `true`, the action can save a cache with the `primary-key`. - Otherwise, the action can't save a cache."
+    default: "true"
+  paths:
+    description: "- When `nix: true`, the action uses `[\"/nix\"]` as default paths. - Otherwise, the action uses an empty list as default paths. - When a newline-separated non-empty list of non-empty path patterns (see [`@actions/glob`](https://github.com/actions/toolkit/tree/main/packages/glob) for supported patterns), the action appends it to default paths and uses the resulting list for restoring and saving caches. - Otherwise, the action uses default paths for restoring and saving caches."
+    default: ""
+  paths-macos:
+    description: "- Overrides `paths`. - Can have an effect only when the action runs on a `macOS` runner."
+    default: ""
+  paths-linux:
+    description: "- Overrides `paths`. - Can have an effect only when the action runs on a `Linux` runner."
+    default: ""
+  backend:
+    description: "Choose an implementation of the `cache` package. - When `actions`, use the [actions version](https://github.com/actions/toolkit/tree/main/packages/cache) from [here](https://github.com/nix-community/cache-nix-action/tree/actions-toolkit/packages/cache). - When `buildjet`, use the [BuildJet version](https://github.com/BuildJet/toolkit/tree/main/packages/cache-buildjet) from [here](https://github.com/nix-community/cache-nix-action/tree/buildjet-toolkit/packages/cache)."
+    default: "actions"
+  gc-max-store-size:
+    description: "- Can have an effect only when `nix: true`, `save: true`. - The input has no effect if \"primary-key\" hit occurs when starting to save the new cache. - When a non-negative integer number (possibly with a suffix), the action collects garbage (via `nix store gc --max ...`) until the Nix store size (in bytes) is at most this number just before the action tries to save a new cache. - If you specify a suffix, it must be `K` (kibibytes, 2 ^ 10 bytes), `M` (mebibytes, 2 ^ 20 bytes) or `G` (gibibytes, 2 ^ 30 bytes), where `2 ^ N` means `2 to the power N`. Examples: `5G` (same as `5368709120`), `20M` (same as `20971520`). - Otherwise, this input has no effect."
+    default: ""
+  gc-max-store-size-macos:
+    description: "- Overrides `gc-max-store-size`. - Can have an effect only when the action runs on a `macOS` runner."
+    default: ""
+  gc-max-store-size-linux:
+    description: "- Overrides `gc-max-store-size`. - Can have an effect only when the action runs on a `Linux` runner."
+    default: ""
+  purge:
+    description: "- When `true`, the action purges (possibly zero) caches. - The action purges only caches scoped to the current [GITHUB_REF](https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables). - Otherwise, this input has no effect."
+    default: "false"
+  purge-primary-key:
+    description: "- Can have an effect only when `purge: true`. - When `always`, the action always purges the cache with the `primary-key`. - When `never`, the action never purges the cache with the `primary-key`. - Otherwise, this input has no effect."
+    default: ""
+  purge-prefixes:
+    description: "- Can have an effect only when `purge: true`. - When a newline-separated non-empty list of non-empty cache key prefixes, the action selects for purging all caches whose keys match some of these prefixes. - Otherwise, this input has no effect."
+    default: ""
+  purge-last-accessed:
+    description: "- Can have an effect only when `purge: true`. - When a non-negative number or a string in the [ISO 8601 duration format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration#iso_8601_duration_format), the action purges selected caches that were last accessed more than this number of seconds or this duration before the start of the `Post Restore` phase. Examples: `0` (0 seconds), `P1DT12H` (1 day and 12 hours). - Otherwise, this input has no effect."
+    default: ""
+  purge-created:
+    description: "- Can have an effect only when `purge: true`. - When a non-negative number or a string in the [ISO 8601 duration format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration#iso_8601_duration_format), the action purges selected caches that were created more than this number of seconds or this duration before the start of the `Post Restore` phase. Examples: `0` (0 seconds), `P1DT12H` (1 day and 12 hours). - Otherwise, this input has no effect."
+    default: ""
+  upload-chunk-size:
+    description: "- When a non-negative number, the action uses it as the chunk size (in bytes) to split up large files during upload. - Otherwise, the action uses the default value `33554432` (32MB)."
+    default: ""
+  token:
+    description: "- The action uses it to communicate with GitHub API. - If you use a personal access token, it must have the `repo` scope ([link](https://docs.github.com/en/rest/actions/cache?apiVersion=2022-11-28#delete-github-actions-caches-for-a-repository-using-a-cache-key))."
+    default: "${{ github.token }}"
+
+outputs:
+  primary-key:
+    description: "- A string. - The `primary-key`."
+    value: '${{ steps.upstream.outputs.primary-key }}'
+  hit:
+    description: "- A boolean string. - `'true'` when `hit-primary-key` is `true` or `hit-first-match` is `true`. - `'false'` otherwise."
+    value: '${{ steps.upstream.outputs.hit }}'
+  hit-primary-key:
+    description: "- A boolean string. - `'true'` when there was a hit on the `primary-key`. - `'false'` otherwise."
+    value: '${{ steps.upstream.outputs.hit-primary-key }}'
+  hit-first-match:
+    description: "- A boolean string. - `'true'` when there was a hit on a key matching `restore-prefixes-first-match`. - `'false'` otherwise."
+    value: '${{ steps.upstream.outputs.hit-first-match }}'
+  restored-key:
+    description: "- A string. - The key of a cache restored via the `primary-key` or via the `restore-prefixes-first-match`. - An empty string otherwise."
+    value: '${{ steps.upstream.outputs.restored-key }}'
+  restored-keys:
+    description: "- A possibly empty array of strings (JSON). - Keys of restored caches. - Example: `[\"key1\", \"key2\"]`."
+    value: '${{ steps.upstream.outputs.restored-keys }}'
+
+runs:
+  using: 'composite'
+  steps:
+    - id: 'upstream'
+      uses: 'nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569' # v7
+      with:
+        primary-key: '${{ inputs.primary-key }}'
+        restore-prefixes-first-match: '${{ inputs.restore-prefixes-first-match }}'
+        restore-prefixes-all-matches: '${{ inputs.restore-prefixes-all-matches }}'
+        lookup-only: '${{ inputs.lookup-only }}'
+        fail-on: '${{ inputs.fail-on }}'
+        nix: '${{ inputs.nix }}'
+        save: '${{ inputs.save }}'
+        paths: '${{ inputs.paths }}'
+        paths-macos: '${{ inputs.paths-macos }}'
+        paths-linux: '${{ inputs.paths-linux }}'
+        backend: '${{ inputs.backend }}'
+        gc-max-store-size: '${{ inputs.gc-max-store-size }}'
+        gc-max-store-size-macos: '${{ inputs.gc-max-store-size-macos }}'
+        gc-max-store-size-linux: '${{ inputs.gc-max-store-size-linux }}'
+        purge: '${{ inputs.purge }}'
+        purge-primary-key: '${{ inputs.purge-primary-key }}'
+        purge-prefixes: '${{ inputs.purge-prefixes }}'
+        purge-last-accessed: '${{ inputs.purge-last-accessed }}'
+        purge-created: '${{ inputs.purge-created }}'
+        upload-chunk-size: '${{ inputs.upload-chunk-size }}'
+        token: '${{ inputs.token }}'

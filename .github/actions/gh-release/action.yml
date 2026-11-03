@@ -1,0 +1,85 @@
+name: "GH Release"
+description: "Pinned wrapper for softprops/action-gh-release, inputs and outputs passed through unchanged. Generated; update the pin with Renovate."
+
+inputs:
+  body:
+    description: "Note-worthy description of changes in release"
+  body_path:
+    description: "Path to load note-worthy description of changes in release from"
+  name:
+    description: "Gives the release a custom name. Defaults to tag name"
+  tag_name:
+    description: "Gives a tag name. Defaults to github.ref_name. refs/tags/<name> values are normalized to <name>."
+  draft:
+    description: "Keeps the release as a draft. Defaults to false. When reusing an existing draft release, set this to true to keep it draft; omit it to publish after upload. On immutable-release repositories, use this for prereleases that upload assets and publish the draft later."
+  prerelease:
+    description: "Identify the release as a prerelease. Defaults to false"
+  preserve_order:
+    description: "Upload artifacts sequentially in the provided order. This does not control the final display order GitHub uses for release assets."
+  files:
+    description: "Newline-delimited list of path globs for asset files to upload. Escape glob metacharacters when matching literal filenames that contain them. `~/...` expands to the runner home directory. On Windows, both \\ and / path separators are accepted. GitHub may normalize raw asset filenames that contain special characters; the action restores the asset label when possible, but the final download name remains GitHub-controlled."
+  working_directory:
+    description: "Base directory to resolve 'files' globs against. Defaults to the workspace root used by the action step."
+  overwrite_files:
+    description: "Overwrite existing files with the same name. Defaults to true"
+    default: "true"
+  fail_on_unmatched_files:
+    description: "Fails if any of the `files` globs match nothing. Defaults to false"
+  repository:
+    description: "Repository to make releases against, in <owner>/<repo> format"
+  token:
+    description: "Authorized GitHub token or PAT. Defaults to github.token when omitted. A non-empty explicit token overrides GITHUB_TOKEN. Passing an empty string treats the token as unset."
+    default: "${{ github.token }}"
+  target_commitish:
+    description: "Commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. When creating a new tag for an older commit, `github.token` may not have permission to create the ref; use a PAT or another token with sufficient contents permissions if you hit 403 `Resource not accessible by integration`."
+  discussion_category_name:
+    description: "If specified, a discussion of the specified category is created and linked to the release. The value must be a category that already exists in the repository. If there is already a discussion linked to the release, this parameter is ignored."
+  generate_release_notes:
+    description: "Whether to automatically generate the name and body for this release. If name is specified, the specified name will be used; otherwise, a name will be automatically generated. If body is specified, the body will be pre-pended to the automatically generated notes."
+  previous_tag:
+    description: "Optional. When generate_release_notes is enabled, use this tag as GitHub's previous_tag_name comparison base. If omitted, GitHub chooses the comparison base automatically."
+    default: ""
+  append_body:
+    description: "Append to existing body instead of overwriting it. Default is false."
+  make_latest:
+    description: "Specifies whether this release should be set as the latest release for the repository. Drafts and prereleases cannot be set as latest. Can be `true`, `false`, or `legacy`. Uses GitHub api default if not provided"
+
+outputs:
+  url:
+    description: "URL to the Release HTML Page"
+    value: '${{ steps.upstream.outputs.url }}'
+  id:
+    description: "Release ID"
+    value: '${{ steps.upstream.outputs.id }}'
+  upload_url:
+    description: "URL for uploading assets to the release"
+    value: '${{ steps.upstream.outputs.upload_url }}'
+  assets:
+    description: "JSON array containing information about each uploaded asset, in the format given [here](https://docs.github.com/en/rest/reference/repos#upload-a-release-asset--code-samples) (minus the `uploader` field)"
+    value: '${{ steps.upstream.outputs.assets }}'
+
+runs:
+  using: 'composite'
+  steps:
+    - id: 'upstream'
+      uses: 'softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64' # v3.0.3
+      with:
+        body: '${{ inputs.body }}'
+        body_path: '${{ inputs.body_path }}'
+        name: '${{ inputs.name }}'
+        tag_name: '${{ inputs.tag_name }}'
+        draft: '${{ inputs.draft }}'
+        prerelease: '${{ inputs.prerelease }}'
+        preserve_order: '${{ inputs.preserve_order }}'
+        files: '${{ inputs.files }}'
+        working_directory: '${{ inputs.working_directory }}'
+        overwrite_files: '${{ inputs.overwrite_files }}'
+        fail_on_unmatched_files: '${{ inputs.fail_on_unmatched_files }}'
+        repository: '${{ inputs.repository }}'
+        token: '${{ inputs.token }}'
+        target_commitish: '${{ inputs.target_commitish }}'
+        discussion_category_name: '${{ inputs.discussion_category_name }}'
+        generate_release_notes: '${{ inputs.generate_release_notes }}'
+        previous_tag: '${{ inputs.previous_tag }}'
+        append_body: '${{ inputs.append_body }}'
+        make_latest: '${{ inputs.make_latest }}'

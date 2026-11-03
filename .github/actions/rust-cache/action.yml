@@ -1,0 +1,78 @@
+name: "Rust Cache"
+description: "Pinned wrapper for Swatinem/rust-cache, inputs and outputs passed through unchanged. Generated; update the pin with Renovate."
+
+inputs:
+  prefix-key:
+    description: "The prefix cache key, this can be changed to start a new cache manually."
+    default: "v0-rust"
+  shared-key:
+    description: "A cache key that is used instead of the automatic `job`-based key, and is stable over multiple jobs."
+  key:
+    description: "An additional cache key that is added alongside the automatic `job`-based cache key and can be used to further differentiate jobs."
+  add-job-id-key:
+    description: "If the automatic `job`-based cache key should include the job id. Defaults to true."
+    default: "true"
+  add-rust-environment-hash-key:
+    description: "Weather the a hash of the rust environment should be included in the cache key. This includes a hash of all Cargo.toml/Cargo.lock files, rust-toolchain files, and .cargo/config.toml files (if present), as well as the specified 'env-vars'. Defaults to true."
+    default: "true"
+  env-vars:
+    description: "Additional environment variables to include in the cache key, separated by spaces."
+  workspaces:
+    description: "Paths to multiple Cargo workspaces and their target directories, separated by newlines."
+  cache-directories:
+    description: "Additional non workspace directories to be cached, separated by newlines."
+  cache-targets:
+    description: "Determines whether workspace targets are cached. If `false`, only the cargo registry will be cached."
+    default: "true"
+  cache-on-failure:
+    description: "Cache even if the build fails. Defaults to false."
+  cache-all-crates:
+    description: "Determines which crates are cached. If `true` all crates will be cached, otherwise only dependent crates will be cached."
+    default: "false"
+  cache-workspace-crates:
+    description: "Similar to cache-all-crates. If `true` the workspace crates will be cached."
+    default: "false"
+  save-if:
+    description: "Determiners whether the cache should be saved. If `false`, the cache is only restored."
+    default: "true"
+  cache-provider:
+    description: "Determines which provider to use for caching. Options are github, or warpbuild. Defaults to github."
+    default: "github"
+  cache-bin:
+    description: "Determines whether to cache ${CARGO_HOME}/bin."
+    default: "true"
+  lookup-only:
+    description: "Check if a cache entry exists without downloading the cache"
+    default: "false"
+  cmd-format:
+    description: "A format string used to format commands to be run, i.e. `rustc` and `cargo`."
+    default: "{0}"
+
+outputs:
+  cache-hit:
+    description: "A boolean value that indicates an exact match was found."
+    value: '${{ steps.upstream.outputs.cache-hit }}'
+
+runs:
+  using: 'composite'
+  steps:
+    - id: 'upstream'
+      uses: 'Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0' # v2.9.3
+      with:
+        prefix-key: '${{ inputs.prefix-key }}'
+        shared-key: '${{ inputs.shared-key }}'
+        key: '${{ inputs.key }}'
+        add-job-id-key: '${{ inputs.add-job-id-key }}'
+        add-rust-environment-hash-key: '${{ inputs.add-rust-environment-hash-key }}'
+        env-vars: '${{ inputs.env-vars }}'
+        workspaces: '${{ inputs.workspaces }}'
+        cache-directories: '${{ inputs.cache-directories }}'
+        cache-targets: '${{ inputs.cache-targets }}'
+        cache-on-failure: '${{ inputs.cache-on-failure }}'
+        cache-all-crates: '${{ inputs.cache-all-crates }}'
+        cache-workspace-crates: '${{ inputs.cache-workspace-crates }}'
+        save-if: '${{ inputs.save-if }}'
+        cache-provider: '${{ inputs.cache-provider }}'
+        cache-bin: '${{ inputs.cache-bin }}'
+        lookup-only: '${{ inputs.lookup-only }}'
+        cmd-format: '${{ inputs.cmd-format }}'

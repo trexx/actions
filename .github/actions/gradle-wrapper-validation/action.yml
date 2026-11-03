@@ -1,0 +1,28 @@
+name: "Gradle Wrapper Validation"
+description: "Pinned wrapper for gradle/actions/wrapper-validation, inputs and outputs passed through unchanged. Generated; update the pin with Renovate."
+
+inputs:
+  min-wrapper-count:
+    description: "Minimum number expected gradle-wrapper.jar files found in the repository. Non-negative number. Higher number is useful in monorepos where each project might have their own wrapper."
+    default: "1"
+  allow-snapshots:
+    description: "Allow Gradle snapshot versions during checksum verification. Boolean, true or false."
+    default: "false"
+  allow-checksums:
+    description: "Accept arbitrary user-defined checksums as valid. Comma separated list of SHA256 checksums (lowercase hex)."
+    default: ""
+
+outputs:
+  failed-wrapper:
+    description: "The path of the Gradle Wrapper(s) JAR that failed validation. Path is a platform-dependent relative path to git repository root. Multiple paths are separated by a | character."
+    value: '${{ steps.upstream.outputs.failed-wrapper }}'
+
+runs:
+  using: 'composite'
+  steps:
+    - id: 'upstream'
+      uses: 'gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c' # v6.4.1
+      with:
+        min-wrapper-count: '${{ inputs.min-wrapper-count }}'
+        allow-snapshots: '${{ inputs.allow-snapshots }}'
+        allow-checksums: '${{ inputs.allow-checksums }}'

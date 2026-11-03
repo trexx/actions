@@ -1,0 +1,68 @@
+name: "Golangci-lint"
+description: "Pinned wrapper for golangci/golangci-lint-action, inputs and outputs passed through unchanged. Generated; update the pin with Renovate."
+
+inputs:
+  version:
+    description: "The version of golangci-lint to use. When `install-mode` is: - `binary` (default): the value can be v2.3, v2.3.4, or `latest` to use the latest version. - `goinstall`: the value can be v2.3.4, `latest`, or the hash of a commit. - `none`: the value is ignored."
+  version-file:
+    description: "Gets the version of golangci-lint to use from a file. The path must be relative to the root of the project, or the `working-directory` if defined. This parameter supports `.golangci-lint-version`, and `.tool-versions` files. Only works with `install-mode: binary` (the default)."
+  install-mode:
+    description: "The mode to install golangci-lint. It can be 'binary', 'goinstall', or 'none'."
+    default: "binary"
+  install-only:
+    description: "Only install golangci-lint. It does not run golangci-lint."
+    default: "false"
+  working-directory:
+    description: "golangci-lint working directory. The default is the project root."
+  github-token:
+    description: "The token is used for fetching the patch of a pull request to show only new issues."
+    default: "${{ github.token }}"
+  verify:
+    description: "If set to true, the action verifies the configuration file against the JSONSchema."
+    default: "true"
+  only-new-issues:
+    description: "If set to true and the action runs on a pull request, the action outputs only newly found issues."
+    default: "false"
+  args:
+    description: "golangci-lint command line arguments."
+    default: ""
+  skip-cache:
+    description: "If set to true, all caching functionality will be completely disabled. This takes precedence over all other caching options."
+    default: "false"
+  skip-save-cache:
+    description: "If set to true, the action will not save any caches, but it may still restore existing caches, subject to other options."
+    default: "false"
+  cache-invalidation-interval:
+    description: "Periodically invalidate a cache when new code is added (number of days)."
+    default: "7"
+  problem-matchers:
+    description: "Force the usage of the embedded problem matchers."
+    default: "false"
+  debug:
+    description: "Debug options for the action. List of comma separated options, the values are `cache`, `clean`. example: \"cache,clean\""
+    default: ""
+  experimental:
+    description: "Experimental options for the action. List of comma separated options. Available options: `automatic-module-directories`, `no-run-logs-group`"
+    default: ""
+
+runs:
+  using: 'composite'
+  steps:
+    - id: 'upstream'
+      uses: 'golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a' # v9.3.0
+      with:
+        version: '${{ inputs.version }}'
+        version-file: '${{ inputs.version-file }}'
+        install-mode: '${{ inputs.install-mode }}'
+        install-only: '${{ inputs.install-only }}'
+        working-directory: '${{ inputs.working-directory }}'
+        github-token: '${{ inputs.github-token }}'
+        verify: '${{ inputs.verify }}'
+        only-new-issues: '${{ inputs.only-new-issues }}'
+        args: '${{ inputs.args }}'
+        skip-cache: '${{ inputs.skip-cache }}'
+        skip-save-cache: '${{ inputs.skip-save-cache }}'
+        cache-invalidation-interval: '${{ inputs.cache-invalidation-interval }}'
+        problem-matchers: '${{ inputs.problem-matchers }}'
+        debug: '${{ inputs.debug }}'
+        experimental: '${{ inputs.experimental }}'

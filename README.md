@@ -1,6 +1,8 @@
 # actions
 GitHub Action Workflows for Org
 
+Repositories reference these workflows and actions by `@main`. Third-party actions are pinned here, never in the calling repositories.
+
 ## Workflows
 
 ### build.yml
@@ -146,6 +148,36 @@ Deletes old images from the repository's GHCR package: untagged and broken image
     keep_n_tagged: 2
 ```
 
+## Pinned third-party actions
+
+Repositories use third-party actions only through these wrappers, so every third-party pin lives in this repository and one Renovate PR here updates all of them. Each wrapper passes the upstream action's inputs (with the same defaults) and outputs through unchanged; use it exactly like the upstream action:
+
+```yaml
+- uses: 'trexx/actions/.github/actions/checkout@main'
+  with:
+    submodules: 'recursive'
+```
+
+| Wrapper | Upstream | Pinned at |
+|---|---|---|
+| `cache` | [`actions/cache`](https://github.com/actions/cache) | v6.1.0 |
+| `cache-nix` | [`nix-community/cache-nix-action`](https://github.com/nix-community/cache-nix-action) | v7 |
+| `checkout` | [`actions/checkout`](https://github.com/actions/checkout) | v7.0.1 |
+| `create-pull-request` | [`peter-evans/create-pull-request`](https://github.com/peter-evans/create-pull-request) | v8.1.1 |
+| `docker-login` | [`docker/login-action`](https://github.com/docker/login-action) | v4.7.0 |
+| `download-artifact` | [`actions/download-artifact`](https://github.com/actions/download-artifact) | v8.0.2 |
+| `gh-release` | [`softprops/action-gh-release`](https://github.com/softprops/action-gh-release) | v3.0.3 |
+| `golangci-lint` | [`golangci/golangci-lint-action`](https://github.com/golangci/golangci-lint-action) | v9.3.0 |
+| `gradle-wrapper-validation` | [`gradle/actions/wrapper-validation`](https://github.com/gradle/actions) | v6.4.1 |
+| `nix-installer` | [`DeterminateSystems/nix-installer-action`](https://github.com/DeterminateSystems/nix-installer-action) | main |
+| `rust-cache` | [`Swatinem/rust-cache`](https://github.com/Swatinem/rust-cache) | v2.9.3 |
+| `rust-toolchain` | [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) | master |
+| `setup-go` | [`actions/setup-go`](https://github.com/actions/setup-go) | v7.0.0 |
+| `setup-node` | [`actions/setup-node`](https://github.com/actions/setup-node) | v7 |
+| `upload-artifact` | [`actions/upload-artifact`](https://github.com/actions/upload-artifact) | v7.0.2 |
+
+To wrap another action, add it to the generator input and regenerate, or copy an existing wrapper.
+
 ## Renovate preset
 
 `default.json` holds the settings every repository shares: the Dependency Dashboard, and leaving `trexx/**` actions and workflows on `main` instead of pinning them.
@@ -155,3 +187,13 @@ Deletes old images from the repository's GHCR package: untagged and broken image
   "extends": ["github>trexx/actions"]
 }
 ```
+
+`docker.json` adds the settings shared by container image repositories: major image updates, digest pinning, and automerge of digest and minor updates.
+
+```json
+{
+  "extends": ["github>trexx/actions", "github>trexx/actions:docker"]
+}
+```
+
+Repository-specific settings (custom managers, package rules, groups) stay in each repository's `.github/renovate.json`.
