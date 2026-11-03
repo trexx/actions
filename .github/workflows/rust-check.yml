@@ -1,0 +1,85 @@
+name: 'Rust check'
+
+# Format, lint and test a Cargo project, optionally on several runners.
+
+on:
+  workflow_call:
+    inputs:
+      toolchain:
+        description: 'Rust toolchain, e.g. stable or 1.99'
+        type: string
+        default: 'stable'
+      os:
+        description: 'JSON array of runners to check on'
+        type: string
+        default: '["ubuntu-26.04"]'
+      working_directory:
+        description: 'Directory holding the Cargo project'
+        type: string
+        default: '.'
+      cargo_args:
+        description: 'Arguments for cargo clippy, test and build, e.g. --locked or --workspace'
+        type: string
+        default: '--locked'
+      fmt:
+        description: 'Check formatting (once, on the first runner)'
+        type: boolean
+        default: true
+      apt_packages:
+        description: 'Space-separated apt packages to install on Linux runners'
+        type: string
+        default: ''
+      build_release:
+        description: 'Also run cargo build --release'
+        type: boolean
+        default: false
+
+jobs:
+  check:
+    name: '${{ matrix.os }}'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(inputs.os) }}
+    runs-on: '${{ matrix.os }}'
+    timeout-minutes: 30
+    permissions:
+      contents: 'read'
+    defaults:
+      run:
+        shell: 'bash'
+        working-directory: '${{ inputs.working_directory }}'
+    env:
+      CARGO_TERM_COLOR: 'always'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
+
+      - name: 'Set up Rust ${{ inputs.toolchain }}'
+        uses: 'dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8' # master
+        with:
+          toolchain: '${{ inputs.toolchain }}'
+          components: 'rustfmt, clippy'
+
+      - name: 'Rust cache'
+        uses: 'Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0' # v2.9.3
+        with:
+          workspaces: '${{ inputs.working_directory }}'
+
+      - name: 'Install system packages'
+        if: "inputs.apt_packages != '' && runner.os == 'Linux'"
+        run: 'sudo apt-get update && sudo apt-get install -y --no-install-recommends ${{ inputs.apt_packages }}'
+
+      - name: 'cargo fmt'
+        if: 'inputs.fmt && strategy.job-index == 0'
+        run: 'cargo fmt --all --check'
+
+      - name: 'cargo clippy'
+        run: 'cargo clippy --all-targets ${{ inputs.cargo_args }} -- -D warnings'
+
+      - name: 'cargo test'
+        run: 'cargo test ${{ inputs.cargo_args }}'
+
+      - name: 'cargo build --release'
+        if: 'inputs.build_release'
+        run: 'cargo build --release ${{ inputs.cargo_args }}'

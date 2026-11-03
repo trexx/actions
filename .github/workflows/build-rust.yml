@@ -2,12 +2,21 @@ name: Build Rust
 
 on:
   workflow_call:
+    inputs:
+      files:
+        description: 'Release assets to upload, one path or glob per line, e.g. target/release/app.exe'
+        type: string
+        required: true
+      runs_on:
+        description: 'Runner to build on'
+        type: string
+        default: 'windows-latest'
 
 jobs:
   build:
     permissions:
       contents: write
-    runs-on: windows-latest
+    runs-on: ${{ inputs.runs_on }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,8 +47,6 @@ jobs:
       - name: Create release and upload exe
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
-          files: |
-            target/release/g6-cli.exe
-            target/release/g6-watch.exe
+          files: ${{ inputs.files }}
           fail_on_unmatched_files: true
           generate_release_notes: true

@@ -1,24 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": true,
   "extends": [
+    "local>trexx/actions",
     "default:automergeDigest",
     "default:automergeMinor",
     "helpers:pinGitHubActionDigests"
   ],
   "enabledManagers": [
     "github-actions"
-  ],
-  "packageRules": [
-    {
-      "description": "Own actions and workflows follow main; don't update or pin them",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "matchPackageNames": [
-        "trexx/**"
-      ],
-      "enabled": false
-    }
   ]
 }
