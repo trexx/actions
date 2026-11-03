@@ -51,9 +51,10 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
 
-      # No cache, so scheduled rebuilds pick up updated packages
+      # No cache, so scheduled rebuilds pick up updated packages.
+      # The source label links the package on ghcr.io to the calling repository.
       - name: 'Build image'
-        run: 'docker build --pull --no-cache -t "${TEST_IMAGE}" "${{ inputs.context }}"'
+        run: 'docker build --pull --no-cache --label "org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}" -t "${TEST_IMAGE}" "${{ inputs.context }}"'
 
       - name: 'Test image'
         if: "inputs.test_command != ''"
