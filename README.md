@@ -32,6 +32,27 @@ jobs:
 
 Inputs: `images`, `context`, `target`, `tags`, `flavor`, `labels`, `platforms`, `push`, `cache_scope`, `prune_images`.
 
+### container-check.yml
+
+Lints every Dockerfile or Containerfile with [hadolint](https://github.com/hadolint/hadolint) (warnings fail; package version pins and consecutive `RUN`s are not checked, since base images are pinned by digest) and builds the images without pushing them. On pull requests it shows whether the images still lint and build, Renovate's base image updates included, and Renovate waits for it before automerging.
+
+```yaml
+on:
+  pull_request:
+  push:
+    branches: [ 'main' ]
+
+jobs:
+  check:
+    uses: 'trexx/actions/.github/workflows/container-check.yml@main'
+    permissions:
+      contents: 'read'
+    with:
+      # all optional
+      build_contexts: '[{"context": "web", "file": "Dockerfile"}, {"context": "proxy", "file": "Dockerfile"}]'
+      hadolint_ignore: 'DL3003'
+```
+
 ### rust-check.yml
 
 `cargo fmt --check` (once), `cargo clippy -D warnings` and `cargo test`, on one or more runners.
@@ -191,6 +212,7 @@ To wrap another action, copy an existing wrapper and replace its inputs, outputs
 - Renovate's `config:recommended`: grouping of monorepo and commonly paired packages, crowd-sourced replacements and workarounds, changelog links and merge confidence badges
 - the Dependency Dashboard
 - plain PR titles ("Update foo to v1.2"), no semantic commit prefixes
+- base images pinned by digest (`docker:pinDigests`)
 - automerge of digest, minor and patch updates once checks pass. Renovate merges them itself (`platformAutomerge: false`), because no repository requires status checks and GitHub's native auto-merge could otherwise merge a PR whose checks failed. A PR with no status checks at all is never automerged
 - weekly lock file maintenance, automerged
 - `trexx/**` actions and workflows stay on `main` instead of being pinned
@@ -203,7 +225,7 @@ A repository that wants hand-reviewed updates adds its own `packageRules`, e.g. 
 }
 ```
 
-`docker.json` adds the settings shared by container image repositories: major image updates and digest pinning.
+`docker.json` adds the settings shared by container image repositories: major image updates.
 
 ```json
 {
