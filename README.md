@@ -180,7 +180,15 @@ To wrap another action, copy an existing wrapper and replace its inputs, outputs
 
 ## Renovate preset
 
-`default.json` holds the settings every repository shares: the Dependency Dashboard, and leaving `trexx/**` actions and workflows on `main` instead of pinning them.
+`default.json` holds the settings every repository shares:
+
+- the Dependency Dashboard
+- plain PR titles ("Update foo to v1.2"), no semantic commit prefixes
+- automerge of digest, minor and patch updates once checks pass. Renovate merges them itself (`platformAutomerge: false`), because no repository requires status checks and GitHub's native auto-merge could otherwise merge a PR whose checks failed. A PR with no status checks at all is never automerged
+- weekly lock file maintenance, automerged
+- `trexx/**` actions and workflows stay on `main` instead of being pinned
+
+A repository that wants hand-reviewed updates adds its own `packageRules`, e.g. `"matchPackageNames": ["*"], "automerge": false` followed by rules for what may automerge.
 
 ```json
 {
@@ -188,7 +196,7 @@ To wrap another action, copy an existing wrapper and replace its inputs, outputs
 }
 ```
 
-`docker.json` adds the settings shared by container image repositories: major image updates, digest pinning, and automerge of digest and minor updates.
+`docker.json` adds the settings shared by container image repositories: major image updates and digest pinning.
 
 ```json
 {
