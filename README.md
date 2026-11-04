@@ -179,6 +179,7 @@ Repositories use third-party actions only through these wrappers, so every third
 | `rust-toolchain` | [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) | master |
 | `setup-go` | [`actions/setup-go`](https://github.com/actions/setup-go) | v7.0.0 |
 | `setup-node` | [`actions/setup-node`](https://github.com/actions/setup-node) | v7 |
+| `setup-opentofu` | [`opentofu/setup-opentofu`](https://github.com/opentofu/setup-opentofu) | v2.0.2 |
 | `upload-artifact` | [`actions/upload-artifact`](https://github.com/actions/upload-artifact) | v7.0.2 |
 
 To wrap another action, copy an existing wrapper and replace its inputs, outputs and pinned `uses:` with the upstream action's (from its `action.yml`).
