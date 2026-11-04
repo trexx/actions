@@ -78,6 +78,37 @@ Scan the published `ghcr.io/<repo>:latest` image, or the checked-out repository,
 Pushes the repository as a signed Flux OCI artifact to `ghcr.io/<owner>/<repo>`.
 
 
+### release-image.yml
+
+Release button for container images that repackage upstream software. Works out the tag from the upstream version (`version_command`): the version itself, or `<version>-N` when it was released before, as a rebuild. Then it builds and pushes the image with that tag and `latest` (through `build.yml`) and, once that succeeds, creates the tag and GitHub release. With `dry_run` it only works out the tag and builds. It only runs from the default branch.
+
+```yaml
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (empty: work it out from the Dockerfile)'
+        default: ''
+      dry_run:
+        description: 'Only work out the tag and build'
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    uses: 'trexx/actions/.github/workflows/release-image.yml@main'
+    permissions:
+      contents: 'write'
+      packages: 'write'
+    with:
+      version_command: >-
+        sed -n 's/^ENV FOO_VERSION="\([^"]*\)"/\1/p' Dockerfile
+      tag: '${{ inputs.tag }}'
+      dry_run: ${{ inputs.dry_run }}
+```
+
+Inputs: `version_command` (required), `tag`, `dry_run`, `prune_images`.
+
 ### build-test-publish.yml
 
 Builds a Docker image, runs an optional test command against it, and on the publish branch pushes it when its contents differ from `:latest`. Tags: `latest`, `<version>`, `<version>-<run number>`, where `<version>` defaults to the tag of the Dockerfile's final `FROM` image.
