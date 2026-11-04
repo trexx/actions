@@ -182,6 +182,7 @@ To wrap another action, copy an existing wrapper and replace its inputs, outputs
 
 `default.json` holds the settings every repository shares:
 
+- Renovate's `config:recommended`: grouping of monorepo and commonly paired packages, crowd-sourced replacements and workarounds, changelog links and merge confidence badges
 - the Dependency Dashboard
 - plain PR titles ("Update foo to v1.2"), no semantic commit prefixes
 - automerge of digest, minor and patch updates once checks pass. Renovate merges them itself (`platformAutomerge: false`), because no repository requires status checks and GitHub's native auto-merge could otherwise merge a PR whose checks failed. A PR with no status checks at all is never automerged
