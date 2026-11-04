@@ -1,10 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "Container image repositories: major image updates, digest pinning, and automerge of digest and minor updates. Use with \"extends\": [\"github>trexx/actions\", \"github>trexx/actions:docker\"].",
+  "description": "Container image repositories: major image updates and digest pinning. Use with \"extends\": [\"github>trexx/actions\", \"github>trexx/actions:docker\"].",
   "extends": [
     "docker:enableMajor",
-    "docker:pinDigests",
-    "default:automergeDigest",
-    "default:automergeMinor"
+    "docker:pinDigests"
   ]
 }

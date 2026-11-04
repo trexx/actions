@@ -1,7 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "Shared Renovate settings for trexx repositories. Use with \"extends\": [\"github>trexx/actions\"].",
+  "extends": [
+    "default:automergeDigest",
+    "default:automergeMinor",
+    ":maintainLockFilesWeekly"
+  ],
   "dependencyDashboard": true,
+  "semanticCommits": "disabled",
+  "platformAutomerge": false,
+  "lockFileMaintenance": {
+    "automerge": true
+  },
   "packageRules": [
     {
       "description": "Own actions and workflows follow main; don't update or pin them",
