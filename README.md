@@ -30,7 +30,7 @@ jobs:
       prune_images: false
 ```
 
-Inputs: `images`, `context`, `target`, `tags`, `flavor`, `labels`, `platforms`, `push`, `cache_scope`, `prune_images`.
+Inputs: `images`, `context`, `target`, `tags`, `flavor`, `labels`, `platforms`, `push`, `cache_scope`, `cache_write`, `prune_images`.
 
 ### rust-check.yml
 
