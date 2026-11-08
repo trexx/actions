@@ -28,7 +28,7 @@ on:
         type: string
         default: ''
       labels:
-        description: 'Extra image labels, one key=value per line'
+        description: 'Extra image labels, one key=value per line; also written as annotations'
         type: string
         default: ''
       platforms:
@@ -72,16 +72,22 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
+      # Extract metadata (tags, labels, annotations) for Docker
       # https://github.com/docker/metadata-action
+      # The annotations go on the image manifest and on the index above it: with the
+      # default provenance attestation the pushed image is an index, and ghcr reads a
+      # package's description from the index's annotations, not from the labels.
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           images: ${{ inputs.images }}
           tags: ${{ inputs.tags }}
           flavor: ${{ inputs.flavor }}
           labels: ${{ inputs.labels }}
+          annotations: ${{ inputs.labels }}
 
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
@@ -95,6 +101,9 @@ jobs:
           platforms: ${{ inputs.platforms }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # Only when pushing: a build that is not pushed may make no index, and buildx
+          # refuses index annotations without one.
+          annotations: ${{ inputs.push && steps.meta.outputs.annotations || '' }}
           cache-from: ${{ inputs.cache_scope != '' && format('type=gha,scope={0}', inputs.cache_scope) || '' }}
           cache-to: ${{ inputs.cache_scope != '' && inputs.cache_write && format('type=gha,scope={0},mode=max', inputs.cache_scope) || '' }}
 

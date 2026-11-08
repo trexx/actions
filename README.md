@@ -30,7 +30,7 @@ jobs:
       prune_images: false
 ```
 
-Inputs: `images`, `context`, `target`, `tags`, `flavor`, `labels`, `platforms`, `push`, `cache_scope`, `cache_write`, `prune_images`.
+Inputs: `images`, `context`, `target`, `tags`, `flavor`, `labels` (also written as annotations on the pushed manifest and index, where ghcr reads a package's description), `platforms`, `push`, `cache_scope`, `cache_write`, `prune_images`.
 
 ### rust-check.yml
 
