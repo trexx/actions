@@ -1,0 +1,78 @@
+name: 'Container check'
+
+# Lints every Dockerfile/Containerfile in the repository with hadolint and builds the
+# images without pushing them. Run on pull requests, it shows whether a change (Renovate's
+# base image updates included) still lints and builds, and gives Renovate a check to wait
+# for before it automerges.
+
+on:
+  workflow_call:
+    inputs:
+      build_contexts:
+        description: 'JSON array of {"context": ..., "file": ...} to build, relative to the repository root. [] only lints.'
+        type: string
+        default: '[{"context": ".", "file": "Dockerfile"}]'
+      hadolint_ignore:
+        description: 'Space-separated hadolint rules to ignore in this repository, on top of the shared ones'
+        type: string
+        default: ''
+
+jobs:
+  lint:
+    name: 'hadolint'
+    runs-on: 'ubuntu-26.04'
+    timeout-minutes: 10
+    permissions:
+      contents: 'read'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
+
+      # Shared lint policy. Package version pins (apt, apk, dnf, pip, npm, go) are left
+      # to the base image digest, which Renovate keeps current, and consecutive RUNs are
+      # a style choice. Everything else at warning level or above fails.
+      - name: 'Find Dockerfiles'
+        id: 'files'
+        env:
+          EXTRA_IGNORE: '${{ inputs.hadolint_ignore }}'
+        run: |
+          files="$(git ls-files | grep -iE '(^|/)(dockerfile|containerfile)[^/]*$' | tr '\n' ' ')"
+          echo "Dockerfiles: ${files:-none}"
+          args='--failure-threshold warning'
+          for rule in DL3008 DL3013 DL3016 DL3018 DL3041 DL3062 DL3059 ${EXTRA_IGNORE}; do
+            args="${args} --ignore ${rule}"
+          done
+          echo "files=${files}" >> "${GITHUB_OUTPUT}"
+          echo "args=${args} ${files}" >> "${GITHUB_OUTPUT}"
+
+      - name: 'hadolint'
+        if: "steps.files.outputs.files != ''"
+        uses: 'docker://ghcr.io/hadolint/hadolint:v2.15.1@sha256:32dac94127fd60b7b7e3fbfc65e1383b9b5e25c9bfd7b8536de7a539fe68a12d'
+        with:
+          entrypoint: '/bin/hadolint'
+          args: '${{ steps.files.outputs.args }}'
+
+  build:
+    name: 'Build ${{ matrix.context }}/${{ matrix.file }}'
+    if: "inputs.build_contexts != '[]'"
+    runs-on: 'ubuntu-26.04'
+    timeout-minutes: 60
+    permissions:
+      contents: 'read'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(inputs.build_contexts) }}
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
+
+      - name: 'Set up Docker Buildx'
+        uses: 'docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069' # v4.4.1
+
+      - name: 'Build (not pushed)'
+        uses: 'docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc' # v7.4.0
+        with:
+          context: '${{ matrix.context }}'
+          file: '${{ matrix.context }}/${{ matrix.file }}'
+          push: false

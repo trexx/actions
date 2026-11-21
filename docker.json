@@ -1,8 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "Container image repositories: major image updates and digest pinning. Use with \"extends\": [\"github>trexx/actions\", \"github>trexx/actions:docker\"].",
+  "description": "Container image repositories: major image updates. Use with \"extends\": [\"github>trexx/actions\", \"github>trexx/actions:docker\"].",
   "extends": [
-    "docker:enableMajor",
-    "docker:pinDigests"
+    "docker:enableMajor"
   ]
 }
