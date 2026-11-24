@@ -73,6 +73,24 @@ jobs:
 
 Scan the published `ghcr.io/<repo>:latest` image, or the checked-out repository, and upload the results to the Security tab.
 
+`trivy.yml` scans another image with `image`. A workflow scanning more than one image gives each its own `category`, or one image's results replace the other's, and turns `sbom` off for all but one, since there is room for only one in the Dependency Graph.
+
+```yaml
+jobs:
+  capture:
+    uses: 'trexx/actions/.github/workflows/trivy.yml@main'
+    permissions:
+      packages: 'read'
+      contents: 'read'
+      security-events: 'write'
+      actions: 'read'
+    with:
+      # all optional
+      image: 'ghcr.io/${{ github.repository }}-capture:latest'
+      category: 'trivy-capture'
+      sbom: false
+```
+
 ### rendered-manifests.yml
 
 Pushes the repository as a signed Flux OCI artifact to `ghcr.io/<owner>/<repo>`.
@@ -165,6 +183,7 @@ Repositories use third-party actions only through these wrappers, so every third
 
 | Wrapper | Upstream | Pinned at |
 |---|---|---|
+| `build-push` | [`docker/build-push-action`](https://github.com/docker/build-push-action) | v7.4.0 |
 | `cache` | [`actions/cache`](https://github.com/actions/cache) | v6.1.0 |
 | `cache-nix` | [`nix-community/cache-nix-action`](https://github.com/nix-community/cache-nix-action) | v7 |
 | `checkout` | [`actions/checkout`](https://github.com/actions/checkout) | v7.0.1 |
@@ -178,6 +197,7 @@ Repositories use third-party actions only through these wrappers, so every third
 | `rust-cache` | [`Swatinem/rust-cache`](https://github.com/Swatinem/rust-cache) | v2.9.3 |
 | `rust-toolchain` | [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) | master |
 | `setup-go` | [`actions/setup-go`](https://github.com/actions/setup-go) | v7.0.0 |
+| `setup-buildx` | [`docker/setup-buildx-action`](https://github.com/docker/setup-buildx-action) | v4.4.1 |
 | `setup-node` | [`actions/setup-node`](https://github.com/actions/setup-node) | v7 |
 | `setup-opentofu` | [`opentofu/setup-opentofu`](https://github.com/opentofu/setup-opentofu) | v2.0.2 |
 | `upload-artifact` | [`actions/upload-artifact`](https://github.com/actions/upload-artifact) | v7.0.2 |
