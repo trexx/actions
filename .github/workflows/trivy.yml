@@ -4,15 +4,15 @@ on:
   workflow_call:
     inputs:
       image:
-        description: 'Image to scan'
+        description: 'Image to scan (default ghcr.io/<repo>:latest)'
         type: string
         default: ''
       category:
-        description: 'Code scanning category of the results: give each image scanned in the same workflow its own, or one replaces the other'
+        description: 'Code scanning category'
         type: string
         default: ''
       sbom:
-        description: 'Submit the image SBOM to the Dependency Graph (one image per workflow: a second submission replaces the first)'
+        description: 'Submit the SBOM to the Dependency Graph'
         type: boolean
         default: true
 

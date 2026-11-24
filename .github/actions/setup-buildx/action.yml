@@ -1,5 +1,5 @@
 name: "Docker Setup Buildx"
-description: "Pinned wrapper for docker/setup-buildx-action. Passes only the inputs used so far; add more from upstream's action.yml when needed. Update the pin with Renovate."
+description: "Pinned docker/setup-buildx-action."
 
 runs:
   using: 'composite'
