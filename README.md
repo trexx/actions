@@ -73,23 +73,7 @@ jobs:
 
 Scan the published `ghcr.io/<repo>:latest` image, or the checked-out repository, and upload the results to the Security tab.
 
-`trivy.yml` scans another image with `image`. A workflow scanning more than one image gives each its own `category`, or one image's results replace the other's, and turns `sbom` off for all but one, since there is room for only one in the Dependency Graph.
-
-```yaml
-jobs:
-  capture:
-    uses: 'trexx/actions/.github/workflows/trivy.yml@main'
-    permissions:
-      packages: 'read'
-      contents: 'read'
-      security-events: 'write'
-      actions: 'read'
-    with:
-      # all optional
-      image: 'ghcr.io/${{ github.repository }}-capture:latest'
-      category: 'trivy-capture'
-      sbom: false
-```
+`trivy.yml` takes optional `image` (another image to scan), `category` and `sbom`. To scan a second image in the same workflow, give it its own `category` and set `sbom: false`, or it replaces the first image's results.
 
 ### rendered-manifests.yml
 
@@ -173,7 +157,7 @@ Deletes old images from the repository's GHCR package: untagged and broken image
 
 ## Pinned third-party actions
 
-Repositories use third-party actions only through these wrappers, so every third-party pin lives in this repository and one Renovate PR here updates all of them. Each wrapper passes the upstream action's inputs (with the same defaults) and outputs through unchanged; use it exactly like the upstream action:
+Repositories use third-party actions only through these wrappers, so every third-party pin lives in this repository and one Renovate PR here updates all of them. Each wrapper passes the upstream action's inputs (with the same defaults) and outputs through unchanged; use it exactly like the upstream action (`setup-buildx` and `build-push` pass only the inputs used so far: add others from upstream's `action.yml` when needed):
 
 ```yaml
 - uses: 'trexx/actions/.github/actions/checkout@main'
