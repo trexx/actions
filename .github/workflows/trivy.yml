@@ -2,6 +2,19 @@ name: 'Trivy'
 
 on:
   workflow_call:
+    inputs:
+      image:
+        description: 'Image to scan (default ghcr.io/<repo>:latest)'
+        type: string
+        default: ''
+      category:
+        description: 'Code scanning category'
+        type: string
+        default: ''
+      sbom:
+        description: 'Submit the SBOM to the Dependency Graph'
+        type: boolean
+        default: true
 
 jobs:
   scan:
@@ -14,12 +27,13 @@ jobs:
     runs-on: 'ubuntu-26.04'
     steps:
       - name: 'Run Trivy in GitHub SBOM mode and submit results to Dependency Graph'
+        if: ${{ inputs.sbom }}
         uses: 'aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25' # v0.36.0
         env:
           TRIVY_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db'
           TRIVY_JAVA_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-java-db,ghcr.io/aquasecurity/trivy-java-db'
         with:
-          image-ref: 'ghcr.io/${{ github.repository }}:latest'
+          image-ref: "${{ inputs.image || format('ghcr.io/{0}:latest', github.repository) }}"
           format: 'github'
           output: 'dependency-results.sbom.json'
           github-pat: '${{ secrets.GITHUB_TOKEN }}'
@@ -30,7 +44,7 @@ jobs:
           TRIVY_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db'
           TRIVY_JAVA_DB_REPOSITORY: 'public.ecr.aws/aquasecurity/trivy-java-db,ghcr.io/aquasecurity/trivy-java-db'
         with:
-          image-ref: 'ghcr.io/${{ github.repository }}:latest'
+          image-ref: "${{ inputs.image || format('ghcr.io/{0}:latest', github.repository) }}"
           format: 'sarif'
           output: 'trivy-results.sarif'
           scanners: 'vuln'
@@ -39,3 +53,4 @@ jobs:
         uses: 'github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea' # v4.39.4
         with:
           sarif_file: 'trivy-results.sarif'
+          category: '${{ inputs.category }}'

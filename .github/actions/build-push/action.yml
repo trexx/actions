@@ -1,0 +1,35 @@
+name: "Build and push Docker images"
+description: "Pinned docker/build-push-action. Add inputs from upstream as needed."
+
+inputs:
+  context:
+    description: "Build context"
+  target:
+    description: "Target stage"
+  tags:
+    description: "Tags"
+  load:
+    description: "Load into docker"
+    default: "false"
+  outputs:
+    description: "Output destinations"
+  provenance:
+    description: "Provenance attestation"
+  cache-from:
+    description: "Cache sources"
+  cache-to:
+    description: "Cache destinations"
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: 'docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc' # v7.4.0
+      with:
+        context: '${{ inputs.context }}'
+        target: '${{ inputs.target }}'
+        tags: '${{ inputs.tags }}'
+        load: '${{ inputs.load }}'
+        outputs: '${{ inputs.outputs }}'
+        provenance: '${{ inputs.provenance }}'
+        cache-from: '${{ inputs.cache-from }}'
+        cache-to: '${{ inputs.cache-to }}'
