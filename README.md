@@ -165,26 +165,26 @@ Repositories use third-party actions only through these wrappers, so every third
     submodules: 'recursive'
 ```
 
-| Wrapper | Upstream | Pinned at |
-|---|---|---|
-| `build-push` | [`docker/build-push-action`](https://github.com/docker/build-push-action) | v7.4.0 |
-| `cache` | [`actions/cache`](https://github.com/actions/cache) | v6.1.0 |
-| `cache-nix` | [`nix-community/cache-nix-action`](https://github.com/nix-community/cache-nix-action) | v7 |
-| `checkout` | [`actions/checkout`](https://github.com/actions/checkout) | v7.0.1 |
-| `create-pull-request` | [`peter-evans/create-pull-request`](https://github.com/peter-evans/create-pull-request) | v8.1.1 |
-| `docker-login` | [`docker/login-action`](https://github.com/docker/login-action) | v4.7.0 |
-| `download-artifact` | [`actions/download-artifact`](https://github.com/actions/download-artifact) | v8.0.2 |
-| `gh-release` | [`softprops/action-gh-release`](https://github.com/softprops/action-gh-release) | v3.0.3 |
-| `golangci-lint` | [`golangci/golangci-lint-action`](https://github.com/golangci/golangci-lint-action) | v9.3.0 |
-| `gradle-wrapper-validation` | [`gradle/actions/wrapper-validation`](https://github.com/gradle/actions) | v6.4.1 |
-| `nix-installer` | [`DeterminateSystems/nix-installer-action`](https://github.com/DeterminateSystems/nix-installer-action) | main |
-| `rust-cache` | [`Swatinem/rust-cache`](https://github.com/Swatinem/rust-cache) | v2.9.3 |
-| `rust-toolchain` | [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) | master |
-| `setup-go` | [`actions/setup-go`](https://github.com/actions/setup-go) | v7.0.0 |
-| `setup-buildx` | [`docker/setup-buildx-action`](https://github.com/docker/setup-buildx-action) | v4.4.1 |
-| `setup-node` | [`actions/setup-node`](https://github.com/actions/setup-node) | v7 |
-| `setup-opentofu` | [`opentofu/setup-opentofu`](https://github.com/opentofu/setup-opentofu) | v2.0.2 |
-| `upload-artifact` | [`actions/upload-artifact`](https://github.com/actions/upload-artifact) | v7.0.2 |
+| Wrapper | Upstream |
+|---|---|
+| `build-push` | [`docker/build-push-action`](https://github.com/docker/build-push-action) |
+| `cache` | [`actions/cache`](https://github.com/actions/cache) |
+| `cache-nix` | [`nix-community/cache-nix-action`](https://github.com/nix-community/cache-nix-action) |
+| `checkout` | [`actions/checkout`](https://github.com/actions/checkout) |
+| `create-pull-request` | [`peter-evans/create-pull-request`](https://github.com/peter-evans/create-pull-request) |
+| `docker-login` | [`docker/login-action`](https://github.com/docker/login-action) |
+| `download-artifact` | [`actions/download-artifact`](https://github.com/actions/download-artifact) |
+| `gh-release` | [`softprops/action-gh-release`](https://github.com/softprops/action-gh-release) |
+| `golangci-lint` | [`golangci/golangci-lint-action`](https://github.com/golangci/golangci-lint-action) |
+| `gradle-wrapper-validation` | [`gradle/actions/wrapper-validation`](https://github.com/gradle/actions) |
+| `nix-installer` | [`DeterminateSystems/nix-installer-action`](https://github.com/DeterminateSystems/nix-installer-action) |
+| `rust-cache` | [`Swatinem/rust-cache`](https://github.com/Swatinem/rust-cache) |
+| `rust-toolchain` | [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) |
+| `setup-go` | [`actions/setup-go`](https://github.com/actions/setup-go) |
+| `setup-buildx` | [`docker/setup-buildx-action`](https://github.com/docker/setup-buildx-action) |
+| `setup-node` | [`actions/setup-node`](https://github.com/actions/setup-node) |
+| `setup-opentofu` | [`opentofu/setup-opentofu`](https://github.com/opentofu/setup-opentofu) |
+| `upload-artifact` | [`actions/upload-artifact`](https://github.com/actions/upload-artifact) |
 
 To wrap another action, copy an existing wrapper and replace its inputs, outputs and pinned `uses:` with the upstream action's (from its `action.yml`).
 
