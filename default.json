@@ -3,6 +3,7 @@
   "description": "Shared Renovate settings for trexx repositories. Use with \"extends\": [\"github>trexx/actions\"].",
   "extends": [
     "config:recommended",
+    "docker:pinDigests",
     "default:automergeDigest",
     "default:automergeMinor",
     ":maintainLockFilesWeekly"
